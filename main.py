@@ -13,7 +13,10 @@ class Main:
         # schedule tasks using EDF algorithm
         self.rtos.set_task_set(self.task_set)
         # you need to find hyper period and change duration to hyper period
-        duration=86
+        # duration=100
+        duration = self.rtos.get_hyper_period()
+        print("here is duration", duration)
+        # return
         self.rtos.run(duration)
     def read_tasks_from_csv(self, filename):
         with open(filename, 'r') as csvfile:

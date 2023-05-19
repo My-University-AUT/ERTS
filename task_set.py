@@ -1,6 +1,6 @@
 from task import Task
 from numpy import *                 
-
+import math
 class TaskSet:
     """Task Set Class
     
@@ -76,4 +76,17 @@ class TaskSet:
             utility (float): Utility of the task set
         """
         self.utility = utility
+
+    def get_hyper_period(self):
+        num1 = self.tasks[0].period
+        num2 = self.tasks[1].period
+        lcm = self.lcm(num1, num2)
+        
+        for i in range(2, len(self.tasks)):
+            period = self.tasks[i].period
+            if period > 0:
+                lcm = self.lcm(lcm, period)
+        return lcm
     
+    def lcm(self, a, b):
+        return abs(a*b) // math.gcd(a, b)

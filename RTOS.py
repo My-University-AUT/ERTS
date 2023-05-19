@@ -1,5 +1,5 @@
 from printer import TaskSetPrinter as Printer
-from schedular import EDFScheduler
+from EDFschedular import EDFScheduler
 from task import RUNNING
 class RTOS:
     """Real-Time Operating System Class"""
@@ -40,3 +40,6 @@ class RTOS:
         """
         self.task_set = task_set
         self.scheduler.set_task_set(task_set)
+    
+    def get_hyper_period(self):
+        return self.task_set.get_hyper_period()

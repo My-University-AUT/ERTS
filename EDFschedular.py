@@ -37,7 +37,6 @@ class EDFScheduler:
         Returns:
             Task: The next task to run, or None if no tasks are ready
         """
-        # complete here 
         
         highest_priority_task = self.get_highest_priority_task(curr_time)
         if not highest_priority_task:
