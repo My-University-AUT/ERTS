@@ -5,9 +5,10 @@ class EDFScheduler:
     Attributes:
         task_set (TaskSet): Task set to be scheduled
     """
-    def __init__(self, task_set):
+    def __init__(self, task_set, is_preemptive=True):
         self.task_set = task_set
         self.completed_tasks = []
+        self.is_preemptive = is_preemptive
         
     def get_ready_tasks(self, curr_time):
         """Get a list of all ready tasks in the task set
@@ -17,7 +18,7 @@ class EDFScheduler:
         """
         ready_tasks = []
         for task in self.task_set.get_all_tasks():
-            if task.state == READY and task.act_time <= curr_time:
+            if (task.state == READY or task.state == RUNNING) and task.act_time <= curr_time:
                 ready_tasks.append(task)
         return ready_tasks
     
@@ -46,15 +47,25 @@ class EDFScheduler:
         Returns:
             Task: The next task to run, or None if no tasks are ready
         """
-        
-        highest_priority_task = self.get_highest_priority_task(curr_time)
-        if not highest_priority_task:
-            return None
+        # check if EDF is not preemptive, pick the task from task_set which has state=RUNNING
+        highest_priority_tasks = None
+        if not self.is_preemptive:
+            highest_priority_tasks = self.get_running_tasks()
+
+        highest_priority_task = None
+        if highest_priority_tasks:
+            highest_priority_task = highest_priority_tasks[0]
+        else:
+            highest_priority_task = self.get_highest_priority_task(curr_time)
+            if not highest_priority_task:
+                return None
         
         highest_priority_task.remaining_time -= 1
         if highest_priority_task.remaining_time == 0:
             highest_priority_task.state = COMPLETED
             highest_priority_task.completion_time = curr_time + 1
+        else:
+            highest_priority_task.state = RUNNING
        
         return highest_priority_task
     def set_task_set(self, task_set):
@@ -94,3 +105,5 @@ class EDFScheduler:
     def get_completed_tasks(self):
         return [task for task in self.task_set.get_all_tasks() if task.state == COMPLETED]
     
+    def get_running_tasks(self):
+        return [task for task in self.task_set.get_all_tasks() if task.state == RUNNING]    
