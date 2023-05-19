@@ -25,9 +25,18 @@ class EDFScheduler:
         ready_tasks = self.get_ready_tasks(curr_time=curr_time)
         if not ready_tasks:
             return None
-        # in edf, the deadline is the priority.
-        highest_priority = min([task.deadline for task in ready_tasks])
-        highest_priority_tasks = [task for task in ready_tasks if task.deadline == highest_priority]
+        
+        # check for interrupts
+        interrupt_tasks = [task for task in ready_tasks if task.type == INTERRUPT]
+        highest_priority_tasks = []
+        if interrupt_tasks:
+            ready_tasks = interrupt_tasks
+            highest_priority = min([task.priority for task in ready_tasks])
+            highest_priority_tasks = [task for task in ready_tasks if task.priority == highest_priority]
+        else:    
+            highest_priority = min([task.deadline for task in ready_tasks])
+            highest_priority_tasks = [task for task in ready_tasks if task.deadline == highest_priority]
+
         return highest_priority_tasks[0]
 
     
