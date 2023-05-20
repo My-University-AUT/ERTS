@@ -23,7 +23,7 @@ class Task (object):
         wcet (int): Worst case execution time of the task
         deadline (int): Deadline of the task
     """
-    def __init__(self,priority=255,name=None,state=SUSPENDED,type=None,act_time=0,period=0,wcet=0,deadline=1000):
+    def __init__(self,priority=255,name=None,state=SUSPENDED,type=None,act_time=0,period=0,wcet=0,deadline=1000, relative_deadline=0):
         self.priority = priority
         self.name = name
         self.state = state
@@ -34,9 +34,7 @@ class Task (object):
         self.remaining_time = wcet
         self.completion_time = None
         self.deadline = deadline
-
-        # you can add more attributes if you need
-        
+        self.relative_deadline = relative_deadline        
     
     def change_state(self,state) -> None:
         """Change the state of the task

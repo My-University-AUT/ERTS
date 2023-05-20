@@ -19,6 +19,7 @@ class Printer:
         print(f"  Remaining time: {task.remaining_time}")
         print(f"  Completion time: {task.completion_time}")
         print(f"  Deadline: {task.deadline}")
+        print(f"  Relative Deadline: {task.relative_deadline}")
 
 class TaskSetPrinter:
     """TaskSetPrinter Class"""
@@ -31,16 +32,18 @@ class TaskSetPrinter:
         self.task_set = task_set
         self.printer = Printer()
         
-    def print_schedule(self, schedule):
+    def print_schedule(self, scheduler):
         """Print the scheduled tasks
         
         Args:
             schedule (List[Task]): A list of scheduled tasks
         """
-        for i, task in enumerate(schedule):
+        for i, task in enumerate(scheduler.task_set.get_all_tasks()):
             print("--------")
             # print(f"Time {i}:")
             self.printer.print_task(task)
+        print("is task set feasible: ", scheduler.task_set.is_feasible())
+        print("task set utility: ", scheduler.task_set.get_utility())
     def set_task_set(self, task_set):
         """Set the task set to print
         

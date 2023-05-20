@@ -1,16 +1,20 @@
 from printer import TaskSetPrinter as Printer
 from EDFschedular import EDFScheduler
-from task import RUNNING
+from DMScheduler import DMScheduler
 class RTOS:
     """Real-Time Operating System Class"""
-    def __init__(self, task_set=None):
-        """Initialize the RTOs instance
+    def __init__(self, task_set=None, scheduler_type="EDF", is_preemptive=True):
+        """Initialize the RTOS instance
         
         Args:
             task_set (TaskSet): The task set to run on the operating system
         """
         self.task_set = task_set
-        self.scheduler = EDFScheduler(task_set)
+        if scheduler_type == "EDF":
+            self.scheduler = EDFScheduler(task_set, is_preemptive)
+        elif scheduler_type == "DM":
+            self.scheduler = DMScheduler(task_set)
+        
         self.printer = Printer()
 
     def run(self, duration):
@@ -27,10 +31,11 @@ class RTOS:
             self.scheduler.add_task(curr_time=curr_time)
             self.scheduler.schedule(curr_time=curr_time)
 
-        # completed_tasks = self.scheduler.get_completed_tasks()
-        # self.printer.print_schedule(completed_tasks)
-        all_tasks = self.scheduler.task_set.get_all_tasks()
-        self.printer.print_schedule(all_tasks)
+        self.scheduler.task_set.set_feasiblity()
+        # self.scheduler.task_set.calc_utility()
+
+
+        self.printer.print_schedule(self.scheduler)
         # return completed_tasks
     def set_task_set(self, task_set):
         """Set the task set for the operating system

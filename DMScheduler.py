@@ -1,6 +1,8 @@
+
 from task import * 
 from Scheduler import Scheduler
-class EDFScheduler(Scheduler):        
+
+class DMScheduler(Scheduler):
     def get_ready_tasks(self, curr_time):
         """Get a list of all ready tasks in the task set
         
@@ -31,8 +33,8 @@ class EDFScheduler(Scheduler):
             highest_priority = min([task.priority for task in ready_tasks])
             highest_priority_tasks = [task for task in ready_tasks if task.priority == highest_priority]
         else:
-            highest_priority = min([task.deadline for task in ready_tasks])
-            highest_priority_tasks = [task for task in ready_tasks if task.deadline == highest_priority]
+            highest_priority = min([task.relative_deadline for task in ready_tasks])
+            highest_priority_tasks = [task for task in ready_tasks if task.relative_deadline == highest_priority]
         return highest_priority_tasks[0]
 
     
@@ -42,15 +44,14 @@ class EDFScheduler(Scheduler):
         Returns:
             Task: The next task to run, or None if no tasks are ready
         """
+        # schedule deadline monotonic scheduler based on highest priority
         highest_priority_task = self.get_highest_priority_task(curr_time)
         if not highest_priority_task:
             return None
-        
+        # decrease remaining time by 1
         highest_priority_task.remaining_time -= 1
         if highest_priority_task.remaining_time == 0:
             highest_priority_task.state = COMPLETED
             highest_priority_task.completion_time = curr_time + 1
         else:
             highest_priority_task.state = RUNNING
-       
-        return highest_priority_task

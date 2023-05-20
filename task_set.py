@@ -1,4 +1,4 @@
-from task import Task
+from task import Task, PERIODIC, APERIODIC, SPORADIC, INTERRUPT
 from numpy import *                 
 import math
 class TaskSet:
@@ -62,20 +62,37 @@ class TaskSet:
             list: List of all Task objects in the task set
         """
         return self.tasks
-    def set_feasible(self, feasible):
+    def set_feasiblity(self):
         """Set the feasibility of the task set
         
         Args:
             feasible (bool): Whether the task set is feasible
         """
-        self.feasible = feasible
-    def set_utility(self, utility):
+        # check task set is feasible by comparing all tasks completion_time to their deadline and return boolean. if completion time is none therefor task is not done yet
+        for task in self.tasks:
+            if task.completion_time is None or task.completion_time > task.deadline:
+                self.feasible = False
+                return
+        self.feasible = True
+    
+    def calc_utility(self):
         """Set the utility of the task set
         
         Args:
             utility (float): Utility of the task set
         """
+        # calculate the utility of task set, sum of ratio of wcet to period
+        utility = 0
+        for task in self.base_task_set:
+            # calculate the utilization for tasks with type=Periodic
+            if task.type == PERIODIC or task.type == SPORADIC or task.type == INTERRUPT:
+                utility += task.wcet / task.period
+            # calculate the utilization for tasks with type=Aperiodic
+            elif task.type == APERIODIC:
+                utility += task.wcet / task.deadline           
+            
         self.utility = utility
+
 
     def get_hyper_period(self):
         num1 = self.tasks[0].period
@@ -90,3 +107,8 @@ class TaskSet:
     
     def lcm(self, a, b):
         return abs(a*b) // math.gcd(a, b)
+    
+    def is_feasible(self):
+        return self.feasible
+    def get_utility(self):
+        return self.utility

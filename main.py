@@ -4,8 +4,9 @@ from task_set import TaskSet
 from RTOS import RTOS
 class Main:
     def __init__(self):
-        self.rtos = RTOS()
-        task_set = self.read_tasks_from_csv('tasks1.csv')
+        self.rtos = RTOS(scheduler_type="EDF", is_preemptive=True)
+        # task_set = self.read_tasks_from_csv('tasks1.csv')
+        task_set = self.read_tasks_from_csv('tasks_interrupts.csv')
         self.task_set = TaskSet(task_set)
         
 
@@ -35,7 +36,8 @@ class Main:
                     act_time=int(act_time),
                     period=int(period),
                     wcet=int(wcet),
-                    deadline=int(deadline)
+                    deadline=int(deadline),
+                    relative_deadline=int(deadline),
                 )
                 task_set.append(task)
             return task_set
